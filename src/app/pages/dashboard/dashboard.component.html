@@ -1,0 +1,317 @@
+
+<div class="dashboard-wrapper">
+  
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="container-fluid">
+      <div class="d-flex justify-content-between align-items-center">
+        <img src="assets/kland-logo.png" alt="K-Land" class="header-logo" 
+             onerror="this.style.display='none'">
+        <div class="header-right">
+          <button class="btn btn-language">العربية</button>
+          <button class="btn btn-menu">
+            <i class="bi bi-list"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container text-center">
+      <h1 class="hero-title">MY ACCOUNT</h1>
+      <p class="hero-subtitle">Manage Your Fun: View Tickets, Book Zones, and Track Your Adventure!</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container my-5">
+    <div class="row">
+      
+      <!-- User Info Card (Top) -->
+      <div class="col-12 mb-4">
+        <div class="user-info-card">
+          <div class="user-avatar">
+            <img *ngIf="user?.image || user?.profileImage" 
+                 [src]="getUserAvatar()" 
+                 [alt]="getFullName()"
+                 (error)="onAvatarError($event)">
+            <i *ngIf="!user?.image && !user?.profileImage" class="bi bi-person-circle"></i>
+          </div>
+          <div class="user-details">
+            <h5 class="user-name">{{ getFullName() }}</h5>
+            <p class="user-contact">+{{ user?.phoneCode || '965' }} {{ user?.phone || 'N/A' }}</p>
+            <p class="user-email">{{ user?.email || 'N/A' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <div class="col-md-3 mb-4">
+        <div class="sidebar-menu">
+          <ul class="menu-list">
+            <li class="menu-item" 
+                [class.active]="selectedMenuItem === 'edit-profile'"
+                (click)="selectMenuItem('edit-profile')">
+              <i class="bi bi-person-circle"></i>
+              <span>Edit Profile</span>
+            </li>
+            <li class="menu-item"
+                [class.active]="selectedMenuItem === 'faqs'"
+                (click)="selectMenuItem('faqs')">
+              <i class="bi bi-question-circle"></i>
+              <span>FAQS</span>
+            </li>
+            <li class="menu-item"
+                [class.active]="selectedMenuItem === 'contact'"
+                (click)="selectMenuItem('contact')">
+              <i class="bi bi-envelope"></i>
+              <span>Contact Us</span>
+            </li>
+            <li class="menu-item delete-item"
+                [class.active]="selectedMenuItem === 'delete'"
+                (click)="selectMenuItem('delete')">
+              <i class="bi bi-trash"></i>
+              <span>Delete Account</span>
+            </li>
+            <li class="menu-item logout-item" (click)="onLogout()">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Logout</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Profile Form -->
+      <div class="col-md-9">
+        
+        <!-- Edit Profile Section -->
+        <div class="profile-card" *ngIf="selectedMenuItem === 'edit-profile'">
+          
+          <!-- Profile Header -->
+          <div class="profile-header">
+            <div class="profile-avatar-wrapper">
+              <div class="profile-avatar">
+                <img *ngIf="user?.image || user?.profileImage" 
+                     [src]="getUserAvatar()" 
+                     [alt]="getFullName()"
+                     (error)="onAvatarError($event)">
+                <i *ngIf="!user?.image && !user?.profileImage" class="bi bi-person-circle"></i>
+              </div>
+              <label for="avatarUpload" class="btn-edit-avatar">
+                <i class="bi bi-camera"></i>
+              </label>
+              <input type="file" 
+                     id="avatarUpload" 
+                     accept="image/*" 
+                     style="display: none;"
+                     (change)="onAvatarUpload($event)">
+            </div>
+            <div class="profile-info">
+              <h4 class="profile-name">{{ getFullName() }}</h4>
+              <p class="profile-email">{{ user?.email || 'N/A' }}</p>
+            </div>
+          </div>
+
+          <!-- Personal Information Section -->
+          <h5 class="section-title">PERSONAL INFORMATION</h5>
+
+          <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+            
+            <!-- First Name & Last Name -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">First Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       formControlName="firstName"
+                       placeholder="Enter first name">
+                <div class="invalid-feedback d-block" 
+                     *ngIf="profileForm.get('firstName')?.invalid && profileForm.get('firstName')?.touched">
+                  First name is required
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Last Name</label>
+                <input type="text" 
+                       class="form-control" 
+                       formControlName="lastName"
+                       placeholder="Enter last name">
+                <div class="invalid-feedback d-block" 
+                     *ngIf="profileForm.get('lastName')?.invalid && profileForm.get('lastName')?.touched">
+                  Last name is required
+                </div>
+              </div>
+            </div>
+
+            <!-- Email & Phone -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Email Address</label>
+                <input type="email" 
+                       class="form-control" 
+                       formControlName="email"
+                       placeholder="Enter email">
+                <div class="invalid-feedback d-block" 
+                     *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                  Valid email is required
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Phone Number</label>
+                <div class="input-group">
+                  <select class="form-select phone-code" formControlName="phoneCode">
+                    <option value="965">965</option>
+                    <option value="91">91</option>
+                    <option value="1">1</option>
+                    <option value="44">44</option>
+                    <option value="971">971</option>
+                  </select>
+                  <input type="tel" 
+                         class="form-control" 
+                         formControlName="phone"
+                         placeholder="Enter phone number">
+                </div>
+                <div class="invalid-feedback d-block" 
+                     *ngIf="profileForm.get('phone')?.invalid && profileForm.get('phone')?.touched">
+                  Phone number is required
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Change Section -->
+            <div class="password-section">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Old Password</label>
+                  <div class="password-input-wrapper">
+                    <input [type]="showOldPassword ? 'text' : 'password'" 
+                           class="form-control" 
+                           formControlName="oldPassword"
+                           placeholder="Enter your current password">
+                    <i class="bi password-toggle-icon" 
+                       [ngClass]="showOldPassword ? 'bi-eye-slash' : 'bi-eye'"
+                       (click)="toggleOldPassword()"></i>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">New Password</label>
+                  <div class="password-input-wrapper">
+                    <input [type]="showNewPassword ? 'text' : 'password'" 
+                           class="form-control" 
+                           formControlName="newPassword"
+                           placeholder="Enter your new password">
+                    <i class="bi password-toggle-icon" 
+                       [ngClass]="showNewPassword ? 'bi-eye-slash' : 'bi-eye'"
+                       (click)="toggleNewPassword()"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label class="form-label">Confirm New Password</label>
+                  <div class="password-input-wrapper">
+                    <input [type]="showConfirmPassword ? 'text' : 'password'" 
+                           class="form-control" 
+                           formControlName="confirmPassword"
+                           placeholder="Confirm your new password">
+                    <i class="bi password-toggle-icon" 
+                       [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"
+                       (click)="toggleConfirmPassword()"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div class="alert alert-success" *ngIf="successMsg">
+              <i class="bi bi-check-circle me-2"></i>{{ successMsg }}
+            </div>
+            <div class="alert alert-danger" *ngIf="errorMsg">
+              <i class="bi bi-exclamation-circle me-2"></i>{{ errorMsg }}
+            </div>
+
+            <!-- Save Button -->
+            <button type="submit" class="btn btn-save" [disabled]="saving">
+              <span *ngIf="!saving">Save</span>
+              <span *ngIf="saving">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Saving...
+              </span>
+            </button>
+
+          </form>
+
+        </div>
+
+        <!-- FAQS Section -->
+        <div class="profile-card" *ngIf="selectedMenuItem === 'faqs'">
+          <h5 class="section-title">FREQUENTLY ASKED QUESTIONS</h5>
+          <div class="faq-content">
+            <p>FAQs content will be displayed here...</p>
+          </div>
+        </div>
+
+        <!-- Contact Us Section -->
+        <div class="profile-card" *ngIf="selectedMenuItem === 'contact'">
+          <h5 class="section-title">CONTACT US</h5>
+          <div class="contact-content">
+            <p>Contact form or information will be displayed here...</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="dashboard-footer">
+    <div class="container">
+      <div class="footer-content">
+        <h5 class="footer-title">Quick links</h5>
+        
+        <div class="footer-links-row">
+          <a href="#">Press</a>
+          <a href="#">FAQS</a>
+        </div>
+        
+        <div class="footer-links-row">
+          <a href="#">Contact us</a>
+          <a href="#">About us</a>
+        </div>
+        
+        <div class="footer-links-row">
+          <a href="#">Join the team</a>
+          <a href="#">Terms & conditions</a>
+        </div>
+        
+        <hr class="footer-divider">
+        
+        <div class="footer-bottom">
+          <div class="footer-bottom-left">
+            <p class="footer-label">PRIVACY POLICY</p>
+            <p class="copyright">Copyright © 2024 K-Land.<br>All Rights Reserved.</p>
+          </div>
+          
+          <div class="footer-bottom-center">
+            <p class="footer-label">FOLLOW US</p>
+            <a href="#" class="social-icon">
+              <i class="bi bi-instagram"></i>
+            </a>
+          </div>
+          
+          <div class="footer-bottom-right">
+            <p class="footer-label">PRESENTED BY</p>
+            <img src="assets/kland-logo.png" 
+                 alt="K-Land" 
+                 class="footer-logo"
+                 onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

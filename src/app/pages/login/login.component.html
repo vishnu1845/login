@@ -1,0 +1,79 @@
+
+<div class="login-container">
+  <div class="background-overlay"></div>
+  
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="logo-container">
+      <img src="assets/kland-logo.png" alt="K-Land" class="logo">
+    </div>
+
+    <!-- Title -->
+    <h2 class="login-title">ENTER YOUR EMAIL TO CONTINUE</h2>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      
+      <!-- Email Input -->
+      <div class="form-group">
+        <input 
+          type="email" 
+          class="form-control" 
+          formControlName="email" 
+          placeholder="Email"
+          [class.is-invalid]="email?.invalid && email?.touched">
+        <div class="invalid-feedback" *ngIf="email?.invalid && email?.touched">
+          <small *ngIf="email?.errors?.['required']">Email is required</small>
+          <small *ngIf="email?.errors?.['email']">Enter a valid email</small>
+        </div>
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-group">
+        <div class="password-wrapper">
+          <input 
+            [type]="showPassword ? 'text' : 'password'" 
+            class="form-control" 
+            formControlName="password" 
+            placeholder="Password"
+            [class.is-invalid]="password?.invalid && password?.touched">
+          <span class="password-toggle" (click)="togglePassword()">
+            <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+          </span>
+        </div>
+        <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+          <small>Password is required</small>
+        </div>
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="forgot-password-container">
+        <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <!-- Error Message -->
+      <div class="alert alert-danger" *ngIf="errorMsg">
+        {{ errorMsg }}
+      </div>
+
+      <!-- Login Button -->
+      <button 
+        type="submit" 
+        class="btn btn-login" 
+        [disabled]="loginForm.invalid || loading">
+        <span *ngIf="!loading">Login</span>
+        <span *ngIf="loading">
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Logging in...
+        </span>
+      </button>
+
+    </form>
+
+    <!-- Create Account Link -->
+    <div class="signup-link">
+      Don't have an account? <a href="#" class="create-account">Create Account</a>
+    </div>
+
+  </div>
+</div>
